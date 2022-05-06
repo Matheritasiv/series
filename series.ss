@@ -239,6 +239,14 @@
                   [(zero? (remainder n (stream-car ps))) #f]
                   [else (loop (stream-cdr ps))]))))
       (stream-shift integers -2))))
+
+(define int-part-of-n*phi
+  (letrec ([A (stream-cons 1 (stream-cons 3
+      (let loop ([B (stream-cdr (stream+ A integers))] [n 4])
+        (if (< n (stream-car B))
+          (stream-cons n (loop B (1+ n)))
+          (loop (stream-cdr B) (1+ n))))))])
+    A))
 ;;}}}
 
 (display-stream (series@/ tan-series))
