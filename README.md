@@ -43,15 +43,7 @@ To calculate the power series expansion at origin of the analytic function `f` s
 we can use the following code
 ```scheme
 (display-series
-  (series@
-    (series@/
-      (series-
-        (series@
-          log-series
-          (series-
-            cos-series
-            one-series))
-        arcsin-series))
+  (series/@
     (series/
       (stream-shift
         (series-
@@ -72,7 +64,14 @@ we can use the following code
             (series@
               cos-series
               sin-series)))
-        -2))))
+        -2))
+    (series-
+      (series@
+        log-series
+        (series-
+          cos-series
+          one-series))
+      arcsin-series)))
 ```
 It outputs
 ```
