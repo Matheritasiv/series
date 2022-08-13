@@ -39,9 +39,7 @@ It outputs
 
 ### Example 2
 To calculate the power series expansion at origin of the analytic function `f` satisfying
-
 ![image](https://github.com/Matheritasiv/series/raw/main/formula1.svg)
-
 we can use the following code
 ```scheme
 (display-series
@@ -101,7 +99,6 @@ It outputs
 ......
 ```
 which means the result is
-
 ![image](https://github.com/Matheritasiv/series/raw/main/formula2.svg)
 
 ## 10-adic Integers
@@ -120,9 +117,7 @@ It outputs
 
 ### Example 4
 To calculate the formula
-
 ![image](https://github.com/Matheritasiv/series/raw/main/formula3.svg)
-
 we can use the following code
 ```scheme
 (display-digits
@@ -145,7 +140,6 @@ It outputs
 129191069035144539403060207957342570935616897000000000000000......
 ```
 which means the result is an integer
-
 ![image](https://github.com/Matheritasiv/series/raw/main/formula4.svg)
 
 ## License
