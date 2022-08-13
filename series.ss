@@ -417,7 +417,7 @@
 ;;; I1'^2 - 1 = I9^2 - 1 = 0
 (define I1--digits (digits-sqrt one-digits 1))
 (define I9-digits (digits- I1--digits))
-;;; I3^2 + 1 = I3'^2 + 1 = I7^2 + 1 = I7'^2 + 1 = 0
+;;; I3^4 - 1 = I3'^4 - 1 = I7^4 - 1 = I7'^4 - 1 = 0
 (define I3-digits (digits-sqrt I9-digits))
 (define I7--digits (digits- I3-digits))
 (define I3--digits (digits-sqrt I9-digits 1))
