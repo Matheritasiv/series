@@ -60,9 +60,9 @@
     (let loop ([n n] [s s])
       (if (zero? n) s
         (loop (1+ n) (stream-cdr s))))
-    (let loop ([n n] [s s])
+    (let loop ([n n])
       (if (zero? n) s
-        (loop (1- n) (stream-cons 0 s))))))
+        (stream-cons 0 (loop (1- n)))))))
 ;;}}}
 
 ;;{{{ Basic construction of series
