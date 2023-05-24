@@ -88,6 +88,23 @@
 (define series+ stream+)
 (define series- stream-)
 (define series*n stream*n)
+(define (series-square s)
+  (let ([s (stream-cons 0 s)])
+    (let loop ([k 0])
+      (stream-cons
+        (let loop ([j (* 2 k)] [s s] [l (list)] [a 0])
+          (if (negative? j) a
+            (let* ([s (stream-cdr s)] [x (stream-car s)])
+              (cond [(> j k) (loop (- j 2) s (cons x l) a)]
+                    [(< j k) (loop (- j 2) s (cdr l) (+ a (* 2 (car l) x)))]
+                    [else (loop (- j 2) s l (+ a (* x x)))]))))
+        (loop (1+ k))))))
+(define (series-expt s n)
+  (cond [(negative? n) (series-expt (series/ s) (- n))]
+        [(zero? n) (stream-cons 1 zeros)] [(= n 1) s]
+        [else
+         (let ([ss (series-square (series-expt s (quotient n 2)))])
+           (if (odd? n) (series* ss s) ss))]))
 (define (series* s1 s2)
   (let loop ([s1 s1])
     (stream+ (stream*n s2 (stream-car s1))
@@ -433,13 +450,7 @@
 ;;}}}
 
 ;;{{{ Definitions of some sequences
-;;;{{{ Bernoulli sequence
-(define Bernoullis
-  (stream/
-    (series/ (stream-shift exp-series -1))
-    exp-series))
-;;;}}}
-;;;{{{ Prime sequence
+;;;{{{ Prime numbers (https://oeis.org/A000040)
 (define primes
   (stream-cons 2
     (stream-filter
@@ -451,7 +462,17 @@
                   [else (loop (stream-cdr ps))]))))
       (stream-shift integers -2))))
 ;;;}}}
-;;;{{{ Integer part of the sequence (sqrt(5)+1)/2*n
+;;;{{{ Partition numbers (https://oeis.org/A000041)
+(define partition
+  (series/
+    (let loop ([b 1] [st 0] [cnt 0])
+      (if (zero? st)
+        (stream-cons b
+          (loop (- b) (1+ (* 3 cnt)) (1+ cnt)))
+        (stream-cons (if (= st cnt) b 0)
+          (loop b (1- st) cnt))))))
+;;;}}}
+;;;{{{ Integer part of the sequence (sqrt(5)+1)/2*n (https://oeis.org/A000201)
 (define int-part-of-n*phi
   (letrec ([A (stream-cons 1 (stream-cons 3
       (let loop ([B (stream-cdr (stream+ A integers))] [n 4])
@@ -460,7 +481,36 @@
           (loop (stream-cdr B) (1+ n))))))])
     A))
 ;;;}}}
-;;;{{{ The non-trivial square root of 1 in 10-adic ring
+;;;{{{ Tree4 numbers (https://oeis.org/A000602)
+(define tree4
+  (letrec* ([r (stream-cons 1
+      (series*n
+        (series+
+          (series* r
+            (series+ (series*n (series@az^n r 1 2) 3)
+                     (series-square r)))
+          (series*n (series@az^n r 1 3) 2))
+        1/6))]
+      [r2 (series-square r)] [r@2 (series@az^n r 1 2)])
+    (series+ (series*n r2 -1/2) (series*n r@2 1/2) r
+      (stream-shift
+        (series*n
+          (series+
+            (series* r2
+              (series+ r2
+                (series*n r@2 6)))
+            (series*n (series@az^n r2 1 2) 3)
+            (series*n (series* r (series@az^n r 1 3)) 8)
+            (series*n (series@az^n r 1 4) 6))
+          1/24) 1))))
+;;;}}}
+;;;{{{ Bernoulli sequence (https://oeis.org/A027641, https://oeis.org/A027642)
+(define Bernoullis
+  (stream/
+    (series/ (stream-shift exp-series -1))
+    exp-series))
+;;;}}}
+;;;{{{ The non-trivial square root of 1 in 10-adic ring (https://oeis.org/A063006)
 #;(define sqrt-of-one-digits
   (digits- one-digits (digits*n idemv-digits 2)))
 (define sqrt-of-one-digits
@@ -510,5 +560,6 @@
 ;}}}
 ;;}}}
 
-;(display-series (series@/ tan-series))
+(display-series Bernoullis)
+(display-series (series@/ arctan-series))
 ;(display-digits (digits+ (digits-expt I2-digits 3) I2-digits))
